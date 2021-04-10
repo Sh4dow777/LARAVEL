@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Student;
 
@@ -93,24 +93,70 @@ class StudentsController extends Controller
     	public function signInStudents(Request $req)
     	{
     		$student= Student::where('phone_number', $req->phone_number)->first();
+
+    		if(!$student)
+    			return response()->json('Введен неверный логин');
     		
-    		if($student)
+ 			if($req->password != $student->password)
+				return response()->json('Введен неверный пароль');
+			
+			return response()->json('Пользователь успешно авторизован');
+    	}
+
+    	public function registerValidate(Request $req)
+	{
+		$validator = Validator::make($req->all(), [
+		'name' => 'required',
+		'surname' => 'required',
+		'patronymic' => 'required',
+		'age' => 'required',
+		'date_of_birth' => 'required',
+		'phone_number' => 'required',
+		'password' => 'required',
+		]);
+
+		if ($validator->fails())
+			return response()->json($validator->errors());
+
+		$user = Student::create($req->all());
+		return response()->json('Регистрация прошла успешно');
+	}
+		public function loginValidate(Request $req) 
+    {
+        $validator = Validator::make($req->all(), [
+            'phone_number' => 'required',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+    	if($student = Student::where('phone_number', $req->phone_number)->first())
+    	{
+    		if ($req->password == $student->password)
     		{
-    			if($req->password == $student->password)
-    			{
-    				return response()->json('Пользователь успешно авторизован');
-    			}
-    			else
-    			{
-    				return response()->json('Введен неверный пароль');
-    			}
-    		}
-    		else
-    		{
-    				return response()->json('Введен неверный логин');
+    			$student->api_token=str_random(50);
+    			$student->save();
+    			return response()->json('Авторизацияпрошла успешно, api_token:'. $student->api_token);
     		}
     	}
-    }
+    			return response()->json('Логин или пароль введены неверно, api_token:'. $student->api_token);
+    		}
 
+		public function logout(Request $req)
+    	{
+        	$student = Student::where("api_token",$req->api_token)->first();
+
+        	if($student)
+	        {
+	            $student->api_token = null;
+	            $student->save();
+	            return response()->json('Разлогирование прошло успешно');
+	        }
+    	}
+    		
+}
+				
 
 	
