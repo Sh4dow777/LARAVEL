@@ -24,8 +24,8 @@ class ProductsController extends Controller
     	$s=$product->save();
 
     	if($s)
-    		return "Nothing is true, everything is permitted";
-    	   return"Si vis pacem, para bellum";
+    		return "Товар добавлен";
+    	   return"Ошибка удаления продукта";
     }
 	public function deleteProducts(Request $req)
 	{

@@ -14,7 +14,7 @@ class StudentsController extends Controller
     }
     public function addStudents(Request $req)
     {
-    	$student = new  Student();
+    	$student = new Student();
 
     	$student->name=$req->name;
     	$student->surname=$req->surname;
@@ -24,8 +24,8 @@ class StudentsController extends Controller
     	$s=$student->save();
 
     	if($s)
-    		return "Nothing is true, everything is permitted";
-    	   return"Si vis pacem, para bellum";
+    		return "Добавление прошло успешно";
+    	   return"Ошибка добавления";
     } 
     public function updateStudents(Request $req)
     {
@@ -118,7 +118,7 @@ class StudentsController extends Controller
 		if ($validator->fails())
 			return response()->json($validator->errors());
 
-		$user = Student::create($req->all());
+		$student = Student::create($req->all());
 		return response()->json('Регистрация прошла успешно');
 	}
 		public function loginValidate(Request $req) 
@@ -130,7 +130,7 @@ class StudentsController extends Controller
 
         if ($validator->fails()) {
             return response()->json($validator->errors());
-        }
+    }
 
     	if($student = Student::where('phone_number', $req->phone_number)->first())
     	{
@@ -155,7 +155,20 @@ class StudentsController extends Controller
 	            return response()->json('Разлогирование прошло успешно');
 	        }
     	}
+    		public function passwordrecovery(Request $req)
+    		{
+
+    			$student = Student::where("api_token",$req->api_token)->first();
     		
+
+			if($req->password != $student->password)
+				return response()->json("Введен неверный пароль");
+
+				$student->password = $req->new_password;
+				$student->save();
+				return response()->json("Пароль успешно изменен");
+			}
+
 }
 				
 

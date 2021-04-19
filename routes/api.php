@@ -13,8 +13,4 @@ Route::post('logout', 'StudentsController@logout');
 Route::get('getProducts', 'ProductsController@getProducts'); 
 Route::post('addProducts', 'ProductsController@addProducts'); 
 Route::post('deleteProducts', 'ProductsController@deleteProducts');
-
-
-
-
-
+Route::post('passwordrecovery','StudentsController@passwordrecovery');
