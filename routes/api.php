@@ -14,3 +14,5 @@ Route::get('getProducts', 'ProductsController@getProducts');
 Route::post('addProducts', 'ProductsController@addProducts'); 
 Route::post('deleteProducts', 'ProductsController@deleteProducts');
 Route::post('passwordrecovery','StudentsController@passwordrecovery');
+Route::get('getTravelling', 'TravellingController@getTravelling');
+Route::post('addBook', 'TravellingController@addBook');
